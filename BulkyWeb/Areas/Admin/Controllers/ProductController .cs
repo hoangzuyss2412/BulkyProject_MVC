@@ -19,7 +19,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
 		}
         public IActionResult Index()
         {
-            List<Product> objProductList = _unitOfWork.ProductRepository.GetAll().ToList();
+            List<Product> objProductList = _unitOfWork.ProductRepository.GetAll(includeProperties: "Category").ToList();
             
             return View(objProductList);
         }
@@ -130,5 +130,14 @@ namespace BulkyWeb.Areas.Admin.Controllers
             TempData["success"] = "Product deleted successfully";
             return RedirectToAction("Index");
         }
+
+        #region API_CALL
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            List<Product> objProductList = _unitOfWork.ProductRepository.GetAll(includeProperties: "Category").ToList();
+            return Json(new {data =  objProductList});
+        }
+        #endregion
     }
 }
