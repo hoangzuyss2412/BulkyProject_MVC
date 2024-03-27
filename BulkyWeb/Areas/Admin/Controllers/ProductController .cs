@@ -44,17 +44,24 @@ namespace BulkyWeb.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(ProductVM obj)
+        public IActionResult Create(ProductVM productVM)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.ProductRepository.Add(obj.Product);
+                _unitOfWork.ProductRepository.Add(productVM.Product);
                 _unitOfWork.Save();
                 TempData["success"] = "Product created successfully";
                 return RedirectToAction("Index", "Product");
             }
-
-            return View();
+            else
+            {
+                productVM.CategoryList = _unitOfWork.CategoryRepository.GetAll().Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.Id.ToString()
+                });
+				return View(productVM);
+			}
         }
         public IActionResult Edit(int? id)
         {
